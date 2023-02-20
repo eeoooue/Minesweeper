@@ -222,11 +222,6 @@ namespace MSW_WPFApp
                     UserShortcutNewGame();
                     return;
 
-                case Key.LeftCtrl:
-                case Key.RightCtrl:
-                    UserShortcutRotateDifficulty();
-                    return;
-
                 case Key.Escape:
                     UserShortcutQuitGame();
                     return;
@@ -254,7 +249,7 @@ namespace MSW_WPFApp
 
         void UserShortcutRotateDifficulty()
         {
-            if ((pressed.Contains(Key.LeftCtrl) || pressed.Contains(Key.RightCtrl)) && pressed.Contains(Key.D))
+            if ((pressed.Contains(Key.LeftCtrl) || pressed.Contains(Key.RightCtrl)))
             {
                 int modulo = Enum.GetNames(typeof(MinesweeperDifficulty)).Length;
                 currentDifficulty = (currentDifficulty + 1) % modulo;
