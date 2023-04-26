@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MSW_Library;
+using MSW_Library.MinesweeperGames;
 
 namespace MSW_WPFApp
 {
@@ -21,14 +22,12 @@ namespace MSW_WPFApp
     /// </summary>
     public partial class MainWindow : Window
     {
-
         public int m = 0;
         public int n = 0;
 
-        public MinesweeperGame myGame = GameFactory.CreateGame(MinesweeperDifficulty.Beginner);
+        public MinesweeperGame myGame = new BeginnerGame();
 
         Button[] buttons;
-        private int currentDifficulty = 0;
 
         private HashSet<Key> pressed = new HashSet<Key>();
 
@@ -43,7 +42,7 @@ namespace MSW_WPFApp
 
         void StartNewGame()
         {
-            myGame = GameFactory.CreateGame((MinesweeperDifficulty)currentDifficulty);
+            myGame = new BeginnerGame();
             m = myGame.m;
             n = myGame.n;
             buttons = new Button[m * n];
@@ -113,7 +112,6 @@ namespace MSW_WPFApp
 
         void UpdateButton(int i, int j)
         {
-
             int p = (i * n) + j;
             Button button = buttons[p];
             button.Content = ReadGameBoard(i, j);
@@ -153,7 +151,7 @@ namespace MSW_WPFApp
 
         string ReadGameBoard(int i, int j)
         {
-            return myGame.GetGameboard()[i, j];
+            return myGame.BoardState[i, j];
         }
 
         private void ButtonClicked(int i, int j)
@@ -214,10 +212,6 @@ namespace MSW_WPFApp
 
             switch (e.Key)
             {
-                case Key.D:
-                    UserShortcutRotateDifficulty();
-                    return;
-
                 case Key.N:
                     UserShortcutNewGame();
                     return;
@@ -243,16 +237,6 @@ namespace MSW_WPFApp
         {
             if ((pressed.Contains(Key.LeftCtrl) || pressed.Contains(Key.RightCtrl)) && pressed.Contains(Key.N))
             {
-                StartNewGame();
-            }
-        }
-
-        void UserShortcutRotateDifficulty()
-        {
-            if ((pressed.Contains(Key.LeftCtrl) || pressed.Contains(Key.RightCtrl)))
-            {
-                int modulo = Enum.GetNames(typeof(MinesweeperDifficulty)).Length;
-                currentDifficulty = (currentDifficulty + 1) % modulo;
                 StartNewGame();
             }
         }

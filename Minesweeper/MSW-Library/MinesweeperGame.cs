@@ -9,12 +9,14 @@ namespace MSW_Library
     public class MinesweeperGame
     {
         private MineField minefield;
-        public GameBoard gameboard;
+        private GameBoard gameboard;
         public int m;
         public int n;
         private int movesMade = 0;
 
         public bool gameOver = false;
+
+        public string[,] BoardState { get {  return gameboard.board; } }
 
         private HashSet<Coordinate> uncovered = new HashSet<Coordinate>();
 
@@ -25,11 +27,6 @@ namespace MSW_Library
 
             minefield = new MineField(m, n, mines);
             gameboard = new GameBoard(m, n); 
-        }
-
-        public string[,] GetGameboard()
-        {
-            return gameboard.board;
         }
 
         public void FlagHere(Coordinate point)

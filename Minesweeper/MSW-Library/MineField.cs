@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace MSW_Library
 {
     public class MineField : ICoordinateGrid
     {
-        private int[,] mines;
-        private Random randomizer;
+        private int[,] _mines;
+        private Random _randomizer;
+
+        HashSet<string> _placed = new HashSet<string>();
 
         public int m { get; set; }
         public int n { get; set; }
@@ -20,25 +18,29 @@ namespace MSW_Library
             m = rows;
             n = columns;
 
-            mines = new int[m, n];
-            randomizer = new Random();
+            _mines = new int[m, n];
+            _randomizer = new Random();
             mineCount = c;
         }
 
         public void SeedMines(Coordinate startPt)
         {
-            HashSet<string> placed = new HashSet<string>();
-            mines = new int[m, n];
+            _mines = new int[m, n];
 
-            while (placed.Count < mineCount)
+            while (_placed.Count < mineCount)
             {
-                Coordinate mine = GetRandomCoord();
-                if (!Logic.CoordinatesMatch(startPt, mine))
+                Coordinate destination = GetRandomCoord();
+                if (!Logic.CoordinatesMatch(startPt, destination))
                 {
-                    placed.Add($"{mine.i},{mine.j}");
-                    mines[mine.i, mine.j] = 1;
+                    PlaceMine(destination);
                 }
             }
+        }
+
+        private void PlaceMine(Coordinate destination)
+        {
+            _placed.Add($"{destination.i},{destination.j}");
+            _mines[destination.i, destination.j] = 1;
         }
 
         public Coordinate[] GetAllMines()
@@ -78,15 +80,19 @@ namespace MSW_Library
 
         public bool IsMine(int i, int j)
         {
-            return Logic.ValidCoordinate(this, i, j) && mines[i, j] == 1;
+            if (Logic.ValidCoordinate(this, i, j))
+            {
+                return _mines[i, j] == 1;
+            }
+            return false;
         }
 
         private Coordinate GetRandomCoord()
         {
             return new Coordinate()
             {
-                i = randomizer.Next(m),
-                j = randomizer.Next(n),
+                i = _randomizer.Next(m),
+                j = _randomizer.Next(n),
             };
         }
     }

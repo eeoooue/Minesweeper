@@ -1,5 +1,6 @@
 ﻿
 using MSW_Library;
+using MSW_Library.MinesweeperGames;
 
 namespace MSW_ConsoleApp
 {
@@ -7,7 +8,7 @@ namespace MSW_ConsoleApp
     {
         static void Main(string[] args)
         {
-            MinesweeperGame myGame = GameFactory.CreateGame(MinesweeperDifficulty.Beginner);
+            MinesweeperGame myGame = new BeginnerGame();
 
             while (!myGame.gameOver)
             {
