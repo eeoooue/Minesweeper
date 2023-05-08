@@ -11,66 +11,63 @@ namespace Minesweeper
 
         private int _mineCount;
 
+        public bool GameOver { get; private set; }
         private bool _seeded = false;
 
         private List<GameTile> _affected = new List<GameTile>();
 
         public Game(int rows, int columns, int mineCount)
         {
-            Board = new GameBoard(rows, columns);
+            Board = new GameBoard(this, rows, columns);
+            GameOver = false;
             _mineCount = mineCount;
         }
 
         public List<GameTile> ClickTile(int row, int col)
         {
             _affected = new List<GameTile>();
-            Explore(row, col);
-            return _affected;
-        }
 
-
-        private void Explore(int row, int col)
-        {
-            if (ValidCoordinates(row, col))
+            if (!GameOver)
             {
-                GameTile tile = Board.GetTile(row, col);
-
-                if (tile.Clicked || tile.Flagged)
-                {
-                    return;
-                }
-
                 if (!_seeded)
                 {
                     SeedMines(row, col);
                 }
 
-                tile.Click();
-                _affected.Add(tile);
+                GameTile tile = Board.GetTile(row, col);
+                tile.UserClick();
 
-                if (tile is EmptyTile emptyTile)
+
+                _affected.Add(tile);
+            }
+
+            return Board.GetAllCells();
+        }
+
+        public void EndGame()
+        {
+            GameOver = true;
+
+            foreach(GameTile tile in Board.Tiles)
+            {
+                if (tile is MineTile && !tile.Clicked)
                 {
-                    if (emptyTile.Counter == 0)
-                    {
-                        for (int i = row-1; i <=row+1; i++)
-                        {
-                            for(int j = col-1; j <=col+1; j++)
-                            {
-                                Explore(i, j);
-                            }
-                        }
-                    }
+                    tile.Click();
                 }
             }
         }
+
 
         public List<GameTile> FlagTile(int row, int col)
         {
             _affected = new List<GameTile>();
 
-            GameTile tile = Board.GetTile(row, col);
-            tile.Flag();
-            _affected.Add(tile);
+            if (!GameOver)
+            {
+                GameTile tile = Board.GetTile(row, col);
+                tile.Flag();
+                _affected.Add(tile);
+            }
 
             return _affected;
         }

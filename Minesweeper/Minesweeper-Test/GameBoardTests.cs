@@ -1,4 +1,5 @@
 using Minesweeper;
+using Minesweeper.Games;
 using Minesweeper.GameTiles;
 
 namespace Minesweeper_Test
@@ -9,25 +10,25 @@ namespace Minesweeper_Test
         [TestMethod]
         public void CanInstantiateGameBoard()
         {
-            GameBoard board = new GameBoard(1, 1);
-            Assert.IsNotNull(board);
+            Game game = new BeginnerGame();
+            Assert.IsNotNull(game.Board);
         }
 
         [TestMethod]
         public void BoardsAreFullOfTiles()
         {
-            GameBoard board = new GameBoard(4, 5);
+            Game game = new BeginnerGame();
 
-            int expectedNumberOfTiles = board.Rows * board.Columns;
-            Assert.AreEqual(expectedNumberOfTiles, board.Tiles.Length);
+            int expectedNumberOfTiles = game.Board.Rows * game.Board.Columns;
+            Assert.AreEqual(expectedNumberOfTiles, game.Board.Tiles.Length);
         }
 
         [TestMethod]
         public void InitialBoardsHaveEmptyTilesOnly()
         {
-            GameBoard board = new GameBoard(4, 4);
+            Game game = new BeginnerGame();
 
-            foreach(GameTile tile in board.Tiles)
+            foreach(GameTile tile in game.Board.Tiles)
             {
                 Assert.IsInstanceOfType(tile, typeof(EmptyTile));
             }
@@ -36,8 +37,9 @@ namespace Minesweeper_Test
         [TestMethod]
         public void CanSelectSpecificTiles()
         {
-            GameBoard board = new GameBoard(4, 5);
-            GameTile tile = board.GetTile(1, 1);
+            Game game = new BeginnerGame();
+
+            GameTile tile = game.Board.GetTile(0, 0);
             Assert.IsNotNull(tile);
         }
     }
