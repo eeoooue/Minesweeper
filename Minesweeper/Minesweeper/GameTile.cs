@@ -41,9 +41,6 @@ namespace Minesweeper
             }
         }
 
-
-
-
         public void Click()
         {
             if (Flagged)
