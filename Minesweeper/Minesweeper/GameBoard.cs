@@ -24,6 +24,16 @@ namespace Minesweeper
             GameOver = false;
         }
 
+        public List<GameTile> GetAllCells()
+        {
+            List<GameTile> list = new List<GameTile>();
+            foreach(GameTile tile in Tiles)
+            {
+                list.Add(tile);
+            }
+            return list;
+        }
+
         public void EndGame()
         {
             _game.EndGame();

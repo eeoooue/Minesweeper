@@ -29,10 +29,19 @@ namespace Minesweeper
 
             if (!GameOver)
             {
-                Explore(row, col);
+                if (!_seeded)
+                {
+                    SeedMines(row, col);
+                }
+
+                GameTile tile = Board.GetTile(row, col);
+                tile.UserClick();
+
+
+                _affected.Add(tile);
             }
 
-            return _affected;
+            return Board.GetAllCells();
         }
 
         public void EndGame()
@@ -41,48 +50,13 @@ namespace Minesweeper
 
             foreach(GameTile tile in Board.Tiles)
             {
-                if (tile is MineTile)
+                if (tile is MineTile && !tile.Clicked)
                 {
-                    Explore(tile.Row, tile.Column);
+                    tile.Click();
                 }
             }
         }
 
-
-        private void Explore(int row, int col)
-        {
-            if (ValidCoordinates(row, col))
-            {
-                GameTile tile = Board.GetTile(row, col);
-
-                if (tile.Clicked || tile.Flagged)
-                {
-                    return;
-                }
-
-                if (!_seeded)
-                {
-                    SeedMines(row, col);
-                }
-
-                tile.Click();
-                _affected.Add(tile);
-
-                if (tile is EmptyTile emptyTile)
-                {
-                    if (emptyTile.Counter == 0)
-                    {
-                        for (int i = row-1; i <=row+1; i++)
-                        {
-                            for(int j = col-1; j <=col+1; j++)
-                            {
-                                Explore(i, j);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         public List<GameTile> FlagTile(int row, int col)
         {
