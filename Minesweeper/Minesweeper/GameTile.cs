@@ -4,7 +4,6 @@ namespace Minesweeper
     public abstract class GameTile
     {
         public string Text { get; protected set; }
-
         public bool Clicked { get; protected set; }
         public bool Flagged { get; protected set; }
 
@@ -12,12 +11,11 @@ namespace Minesweeper
 
         public int Row { get; private set; }
         public int Column { get; private set; }
-
+        
         public GameTile(GameBoard parent, int i, int j)
         {
-            Text = "";
             _board = parent;
-
+            Text = "";
             Row = i;
             Column = j;
         }
@@ -32,7 +30,6 @@ namespace Minesweeper
                 Activate();
                 return true;
             }
-
             return false;
         }
 

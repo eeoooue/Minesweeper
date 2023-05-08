@@ -11,21 +11,41 @@ namespace Minesweeper
 
         private int _mineCount;
 
+        public bool GameOver { get; private set; }
         private bool _seeded = false;
 
         private List<GameTile> _affected = new List<GameTile>();
 
         public Game(int rows, int columns, int mineCount)
         {
-            Board = new GameBoard(rows, columns);
+            Board = new GameBoard(this, rows, columns);
+            GameOver = false;
             _mineCount = mineCount;
         }
 
         public List<GameTile> ClickTile(int row, int col)
         {
             _affected = new List<GameTile>();
-            Explore(row, col);
+
+            if (!GameOver)
+            {
+                Explore(row, col);
+            }
+
             return _affected;
+        }
+
+        public void EndGame()
+        {
+            GameOver = true;
+
+            foreach(GameTile tile in Board.Tiles)
+            {
+                if (tile is MineTile)
+                {
+                    Explore(tile.Row, tile.Column);
+                }
+            }
         }
 
 
@@ -68,9 +88,12 @@ namespace Minesweeper
         {
             _affected = new List<GameTile>();
 
-            GameTile tile = Board.GetTile(row, col);
-            tile.Flag();
-            _affected.Add(tile);
+            if (!GameOver)
+            {
+                GameTile tile = Board.GetTile(row, col);
+                tile.Flag();
+                _affected.Add(tile);
+            }
 
             return _affected;
         }

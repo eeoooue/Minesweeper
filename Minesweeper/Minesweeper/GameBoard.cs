@@ -12,8 +12,11 @@ namespace Minesweeper
 
         public bool GameOver { get; private set; }
 
-        public GameBoard(int rows, int columns)
+        private Game _game;
+
+        public GameBoard(Game game, int rows, int columns)
         {
+            _game = game;
             Rows = rows;
             Columns = columns;
             Tiles = new GameTile[Rows, Columns];
@@ -23,7 +26,7 @@ namespace Minesweeper
 
         public void EndGame()
         {
-            GameOver = true;
+            _game.EndGame();
         }
 
         public GameTile GetTile(int i, int j)
