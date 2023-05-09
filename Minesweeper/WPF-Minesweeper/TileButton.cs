@@ -99,5 +99,37 @@ namespace WPF_Minesweeper
             Foreground = minecountColours[counter];
             Content = counter.ToString();
         }
+
+        public void ShowVictoryState(GameTile tile)
+        {
+            if (tile is EmptyTile emptyTile)
+            {
+                int count = emptyTile.Counter;
+                ShowCounter(count);
+                Foreground = Brushes.DarkGray;
+            }
+            else
+            {
+                ShowMine();
+                Foreground = Brushes.White;
+                Background = Brushes.DarkGreen;
+            }
+        }
+
+        public void ShowLossState(GameTile tile)
+        {
+            if (tile is MineTile)
+            {
+                ShowMine();
+            }
+            else if (tile.Clicked)
+            {
+                Foreground = Brushes.DarkGray;
+            }
+            else if (tile.Flagged)
+            {
+                Background = Brushes.Black;
+            }
+        }
     }
 }

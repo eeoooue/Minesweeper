@@ -12,6 +12,8 @@ namespace WPF_Minesweeper
 
         public TileButton[,] _tileButtons;
 
+        private GameBoard _board;
+
         private Game _mygame;
 
         public ButtonBoard(GameBoard gameBoard, Game myGame, Grid container)
@@ -20,6 +22,7 @@ namespace WPF_Minesweeper
             Columns = gameBoard.Columns;
 
             _mygame = myGame;
+            _board = gameBoard;
             _tileButtons = new TileButton[Rows, Columns];
 
             BuildContainer(container);
@@ -69,8 +72,40 @@ namespace WPF_Minesweeper
             {
                 List<GameTile> affected = _mygame.ClickTile(row, column);
                 UpdateTiles(affected);
+                CheckGameEnd();
             }
         }
+
+        private void CheckGameEnd()
+        {
+            if (_mygame.Victory)
+            {
+                ShowVictory();
+            }
+            else if (_mygame.GameOver)
+            {
+                ShowLoss();
+            }
+        }
+
+        private void ShowVictory()
+        {
+            foreach (GameTile tile in _board.GetAllCells())
+            {
+                TileButton button = _tileButtons[tile.Row, tile.Column];
+                button.ShowVictoryState(tile);
+            }
+        }
+
+        private void ShowLoss()
+        {
+            foreach (GameTile tile in _board.GetAllCells())
+            {
+                TileButton button = _tileButtons[tile.Row, tile.Column];
+                button.ShowLossState(tile);
+            }
+        }
+
 
         private void UpdateTiles(List<GameTile> tiles)
         {

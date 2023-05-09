@@ -34,9 +34,9 @@ namespace Minesweeper
             return list;
         }
 
-        public void EndGame()
+        public void LoseGame()
         {
-            _game.EndGame();
+            _game.LoseGame();
         }
 
         public GameTile GetTile(int i, int j)
