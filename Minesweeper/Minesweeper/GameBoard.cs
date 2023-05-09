@@ -19,8 +19,8 @@ namespace Minesweeper
             _game = game;
             Rows = rows;
             Columns = columns;
-            Tiles = new GameTile[Rows, Columns];
-            BuildTiles();
+            Tiles = BuildTiles();
+
             GameOver = false;
         }
 
@@ -44,15 +44,18 @@ namespace Minesweeper
             return Tiles[i, j];
         }
 
-        private void BuildTiles()
+        private GameTile[,] BuildTiles()
         {
-            for(int i = 0; i < Rows; i++)
+            GameTile[,] tiles = new GameTile[Rows, Columns];
+            for (int i = 0; i < Rows; i++)
             {
                 for(int j = 0; j < Columns; j++)
                 {
-                    Tiles[i, j] = new EmptyTile(this, i, j);
+                    tiles[i, j] = new EmptyTile(this, i, j);
                 }
             }
+
+            return tiles;
         }
 
         public void SeedMine(int row, int column)
