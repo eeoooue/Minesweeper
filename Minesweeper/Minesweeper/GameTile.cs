@@ -53,6 +53,8 @@ namespace Minesweeper
                 Clicked = true;
                 Activate();
 
+                _board.Affected.Push(this);
+
                 if (Text == "0")
                 {
                     foreach(GameTile tile in GetNeighbours())
@@ -128,6 +130,7 @@ namespace Minesweeper
             {
                 Flagged = false;
             }
+            _board.Affected.Push(this);
 
             return Flagged;
         }

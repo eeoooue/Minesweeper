@@ -16,8 +16,6 @@ namespace Minesweeper
 
         private bool HasMines {  get { return _mines.Count > 0; } }
 
-        private List<GameTile> _affected = new();
-
         private List<MineTile> _mines = new();
 
         public Game(int rows, int columns, int mineCount)
@@ -43,21 +41,30 @@ namespace Minesweeper
 
             CheckGameState();
 
-            return Board.GetAllCells();
+            return GetAffected();
+        }
+
+        private List<GameTile> GetAffected()
+        {
+            List<GameTile> affected = new List<GameTile>();
+            while (Board.Affected.Count > 0)
+            {
+                GameTile tile = Board.Affected.Pop();
+                affected.Add(tile);
+            }
+
+            return affected;
         }
 
         public List<GameTile> FlagTile(int row, int col)
         {
-            _affected = new List<GameTile>();
-
             if (!GameOver)
             {
                 GameTile tile = Board.GetTile(row, col);
                 tile.Flag();
-                _affected.Add(tile);
             }
 
-            return _affected;
+            return GetAffected();
         }
 
         private void SeedMines(int i, int j)
