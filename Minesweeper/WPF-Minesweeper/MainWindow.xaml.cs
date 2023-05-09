@@ -1,6 +1,5 @@
 ﻿using Minesweeper;
 using Minesweeper.Games;
-using Minesweeper.GameTiles;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,15 +23,15 @@ namespace WPF_Minesweeper
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int m = 0;
-        public int n = 0;
-
         public Game myGame = new BeginnerGame();
 
         private HashSet<Key> _pressed = new HashSet<Key>();
 
+        public int DifficultySetting { get; private set; }
+
         public MainWindow()
         {
+            DifficultySetting = 0;
             Title = "Minesweeper";
             InitializeComponent();
             KeyDown += new KeyEventHandler(KeyDownListener);
@@ -40,12 +39,23 @@ namespace WPF_Minesweeper
             StartNewGame();
         }
 
+        private Game GetGameInstance()
+        {
+            switch (DifficultySetting)
+            {
+                case 0:
+                    return new BeginnerGame();
+                case 1:
+                    return new IntermediateGame();
+                default:
+                    return new ExpertGame();
+            }
+        }
+
         void StartNewGame()
         {
-            myGame = new BeginnerGame();
-            m = myGame.Board.Rows;
-            n = myGame.Board.Columns;
-            ButtonBoard board = new ButtonBoard(myGame.Board, myGame, Container);
+            myGame = GetGameInstance();
+            new ButtonBoard(myGame.Board, myGame, Container);
         }
         
         #region keyboard commands
@@ -56,6 +66,10 @@ namespace WPF_Minesweeper
 
             switch (e.Key)
             {
+                case Key.D:
+                    UserShortcutRotateDifficulty();
+                    return;
+
                 case Key.N:
                     UserShortcutNewGame();
                     return;
@@ -74,6 +88,15 @@ namespace WPF_Minesweeper
             if (_pressed.Contains(e.Key))
             {
                 _pressed.Remove(e.Key);
+            }
+        }
+
+        void UserShortcutRotateDifficulty()
+        {
+            if ((_pressed.Contains(Key.LeftCtrl) || _pressed.Contains(Key.RightCtrl)) && _pressed.Contains(Key.D))
+            {
+                DifficultySetting = (DifficultySetting + 1) % 3;
+                StartNewGame();
             }
         }
 

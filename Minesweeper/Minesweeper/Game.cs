@@ -5,11 +5,10 @@ namespace Minesweeper
     public abstract class Game
     {
         public GameBoard Board { get; private set; }
-
-        private int _mineCount;
-
         public bool GameOver { get; private set; }
         public bool Victory { get; private set; }
+
+        private int _mineCount;
 
         public Game(int rows, int columns, int mineCount)
         {
