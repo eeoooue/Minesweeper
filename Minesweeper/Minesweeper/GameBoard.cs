@@ -4,64 +4,53 @@ namespace Minesweeper
 {
     public class GameBoard
     {
-        public int Rows { get; private set; }
-
-        public int Columns { get; private set; }
-
         public GameTile[,] Tiles { get; private set; }
-
-        public bool Cleared { get { return Clearables == 0; } }
-
-        protected int Clearables { get; private set; }
+        public int Rows { get { return Tiles.GetLength(0); } }
+        public int Columns { get { return Tiles.GetLength(1); } }
+        public Stack<GameTile> Affected { get { return _affectedTiles; } }
 
         private Stack<GameTile> _affectedTiles = new Stack<GameTile>();
 
-        private Random _randomizer = new Random();
-
-        public bool HasMines { get { return _mines.Count > 0; } }
-
         public List<MineTile> _mines = new();
 
-        public Stack<GameTile> Affected { get { return _affectedTiles; } }
+        private int _clearables;
 
         public GameBoard(int rows, int columns)
         {
-            Rows = rows;
-            Columns = columns;
-            Tiles = BuildTiles();
-            Clearables = Rows * Columns;
+            Tiles = new GameTile[rows, columns];
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Columns; j++)
+                {
+                    Tiles[i, j] = new EmptyTile(this, i, j);
+                }
+            }
+
+            _clearables = rows * columns;
+        }
+
+        public bool FullyCleared()
+        {
+            return _clearables == 0;
+        }
+
+        public bool ContainsMines()
+        {
+            return _mines.Count > 0;
         }
 
         public void ClearTile()
         {
-            Clearables--;
+            _clearables--;
         }
-
-        public GameTile GetTile(int i, int j)
-        {
-            return Tiles[i, j];
-        }
-
-        private GameTile[,] BuildTiles()
-        {
-            GameTile[,] tiles = new GameTile[Rows, Columns];
-            for (int i = 0; i < Rows; i++)
-            {
-                for(int j = 0; j < Columns; j++)
-                {
-                    tiles[i, j] = new EmptyTile(this, i, j);
-                }
-            }
-
-            return tiles;
-        }
-
 
         public void SeedMines(GameTile origin, int mineCount)
         {
+            Random randomizer = new Random();
+
             while (_mines.Count < mineCount)
             {
-                GameTile tile = GetRandomTile();
+                GameTile tile = GetRandomTile(randomizer);
 
                 if (tile is EmptyTile && tile != origin)
                 {
@@ -71,11 +60,11 @@ namespace Minesweeper
             }
         }
 
-        private GameTile GetRandomTile()
+        private GameTile GetRandomTile(Random randomizer)
         {
-            int row = _randomizer.Next(0, Rows);
-            int column = _randomizer.Next(0, Columns);
-            GameTile tile = GetTile(row, column);
+            int row = randomizer.Next(0, Rows);
+            int column = randomizer.Next(0, Columns);
+            GameTile tile = Tiles[row, column];
 
             return tile;
         }
@@ -84,7 +73,7 @@ namespace Minesweeper
         {
             MineTile mine = new MineTile(this, tile.Row, tile.Column);
             Tiles[tile.Row, tile.Column] = mine;
-            Clearables--;
+            _clearables--;
 
             return mine;
         }

@@ -19,70 +19,52 @@ namespace Minesweeper
             _mineCount = mineCount;
         }
 
-        public List<GameTile> ClickTile(int row, int col)
+        public void ClickTile(int row, int col)
         {
             if (!GameOver)
             {
-                GameTile tile = Board.GetTile(row, col);
-
-                if (!Board.HasMines)
+                GameTile tile = Board.Tiles[row, col];
+                if (!Board.ContainsMines())
                 {
                     Board.SeedMines(tile, _mineCount);
                 }
-                
                 tile.UserClick();
             }
-
-            CheckGameState();
-
-            return GetAffected();
+            GameOver = CheckGameOver();
         }
 
-        private List<GameTile> GetAffected()
-        {
-            List<GameTile> affected = new List<GameTile>();
-            while (Board.Affected.Count > 0)
-            {
-                GameTile tile = Board.Affected.Pop();
-                affected.Add(tile);
-            }
-
-            return affected;
-        }
-
-        public List<GameTile> FlagTile(int row, int col)
+        public void FlagTile(int row, int col)
         {
             if (!GameOver)
             {
-                GameTile tile = Board.GetTile(row, col);
+                GameTile tile = Board.Tiles[row, col];
                 tile.Flag();
             }
-
-            return GetAffected();
         }
 
-        private void CheckGameState()
+        private bool CheckGameOver()
         {
             foreach (MineTile mine in Board._mines)
             {
                 if (mine.Clicked)
                 {
                     LoseGame();
-                    return;
+                    return true;
                 }
             }
 
-            if (Board.Cleared)
+            if (Board.FullyCleared())
             {
                 WinGame();
-                return;
+                return true;
             }
+
+            return false;
         }
 
         private void WinGame()
         {
             Victory = true;
-            GameOver = true;
         }
 
         private void LoseGame()
@@ -91,7 +73,6 @@ namespace Minesweeper
             {
                 tile.Click();
             }
-            GameOver = true;
         }
     }
 }

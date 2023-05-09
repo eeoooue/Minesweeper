@@ -70,8 +70,8 @@ namespace WPF_Minesweeper
         {
             if (ValidCoord(row, column))
             {
-                List<GameTile> affected = _mygame.ClickTile(row, column);
-                UpdateTiles(affected);
+                _mygame.ClickTile(row, column);
+                UpdateAffectedTiles();
                 CheckGameEnd();
             }
         }
@@ -106,11 +106,11 @@ namespace WPF_Minesweeper
             }
         }
 
-
-        private void UpdateTiles(List<GameTile> tiles)
+        private void UpdateAffectedTiles()
         {
-            foreach (GameTile tile in tiles)
+            while (_board.Affected.Count > 0)
             {
+                GameTile tile = _board.Affected.Pop();
                 TileButton button = _tileButtons[tile.Row, tile.Column];
                 button.Update(tile);
             }
@@ -120,8 +120,8 @@ namespace WPF_Minesweeper
         {
             if (ValidCoord(row, column))
             {
-                List<GameTile> affected = _mygame.FlagTile(row, column);
-                UpdateTiles(affected);
+                _mygame.FlagTile(row, column);
+                UpdateAffectedTiles();
             }
         }
 
