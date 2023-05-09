@@ -7,8 +7,8 @@ namespace WPF_Minesweeper
 {
     public class ButtonBoard
     {
-        public int Rows { get; private set; }
-        public int Columns { get; private set; }
+        public int Rows { get { return _board.Rows; } }
+        public int Columns { get { return _board.Columns; } }
 
         public TileButton[,] _tileButtons;
 
@@ -18,9 +18,6 @@ namespace WPF_Minesweeper
 
         public ButtonBoard(GameBoard gameBoard, Game myGame, Grid container)
         {
-            Rows = gameBoard.Rows;
-            Columns = gameBoard.Columns;
-
             _mygame = myGame;
             _board = gameBoard;
             _tileButtons = new TileButton[Rows, Columns];
