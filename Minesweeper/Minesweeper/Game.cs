@@ -13,13 +13,16 @@ namespace Minesweeper
 
         public bool GameOver { get; private set; }
         public bool Victory { get; private set; }
-        private bool _seeded = false;
 
-        private List<GameTile> _affected = new List<GameTile>();
+        private bool HasMines {  get { return _mines.Count > 0; } }
+
+        private List<GameTile> _affected = new();
+
+        private List<MineTile> _mines = new();
 
         public Game(int rows, int columns, int mineCount)
         {
-            Board = new GameBoard(this, rows, columns);
+            Board = new GameBoard(rows, columns);
             GameOver = false;
             Victory = false;
             _mineCount = mineCount;
@@ -27,69 +30,21 @@ namespace Minesweeper
 
         public List<GameTile> ClickTile(int row, int col)
         {
-            _affected = new List<GameTile>();
-
             if (!GameOver)
             {
-                if (!_seeded)
+                if (!HasMines)
                 {
                     SeedMines(row, col);
                 }
 
                 GameTile tile = Board.GetTile(row, col);
                 tile.UserClick();
-
-
-                _affected.Add(tile);
             }
 
-
-            if (GameIsWon())
-            {
-                Victory = true;
-                GameOver = true;
-            }
+            CheckGameState();
 
             return Board.GetAllCells();
         }
-
-
-        private bool GameIsWon()
-        {
-            foreach(GameTile tile in Board.GetAllCells())
-            {
-                if (tile.Clicked)
-                {
-                    if (tile is MineTile)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (tile is EmptyTile)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        public void LoseGame()
-        {
-            foreach (GameTile tile in Board.Tiles)
-            {
-                if (tile is MineTile && !tile.Clicked)
-                {
-                    tile.Click();
-                }
-            }
-
-            GameOver = true;
-        }
-
 
         public List<GameTile> FlagTile(int row, int col)
         {
@@ -110,9 +65,7 @@ namespace Minesweeper
             GameTile origin = Board.GetTile(i, j);
             Random randomizer = new Random();
 
-            int placed = 0;
-
-            while (placed < _mineCount)
+            while (_mines.Count < _mineCount)
             {
                 int row = randomizer.Next(0, Board.Rows);
                 int column = randomizer.Next(0, Board.Columns);
@@ -120,24 +73,44 @@ namespace Minesweeper
 
                 if (tile is EmptyTile && tile != origin)
                 {
-                    Board.SeedMine(row, column);
-                    placed++;
+                    MineTile mine = Board.SeedMine(row, column);
+                    _mines.Add(mine);
                 }
             }
-
-            _seeded = true;
         }
 
-        public bool ValidCoordinates(int i, int j)
+        private void CheckGameState()
         {
-            if (0 <= i && i < Board.Rows)
+            foreach (MineTile mine in _mines)
             {
-                if (0 <= j && j < Board.Columns)
+                if (mine.Clicked)
                 {
-                    return true;
+                    LoseGame();
+                    return;
                 }
             }
-            return false;
+
+            if (Board.Cleared)
+            {
+                WinGame();
+                return;
+            }
+        }
+
+        private void WinGame()
+        {
+            Victory = true;
+            GameOver = true;
+        }
+
+        private void LoseGame()
+        {
+            foreach (MineTile tile in _mines)
+            {
+                tile.Click();
+            }
+
+            GameOver = true;
         }
     }
 }

@@ -10,18 +10,25 @@ namespace Minesweeper
 
         public GameTile[,] Tiles { get; private set; }
 
-        public bool GameOver { get; private set; }
+        public bool Cleared { get { return Clearables == 0; } }
 
-        private Game _game;
+        protected int Clearables { get; private set; }
 
-        public GameBoard(Game game, int rows, int columns)
+        private Stack<GameTile> _affectedTiles = new Stack<GameTile>();
+
+        public Stack<GameTile> Affected { get { return _affectedTiles; } }
+
+        public GameBoard(int rows, int columns)
         {
-            _game = game;
             Rows = rows;
             Columns = columns;
             Tiles = BuildTiles();
+            Clearables = Rows * Columns;
+        }
 
-            GameOver = false;
+        public void ClearTile()
+        {
+            Clearables--;
         }
 
         public List<GameTile> GetAllCells()
@@ -32,11 +39,6 @@ namespace Minesweeper
                 list.Add(tile);
             }
             return list;
-        }
-
-        public void LoseGame()
-        {
-            _game.LoseGame();
         }
 
         public GameTile GetTile(int i, int j)
@@ -58,9 +60,13 @@ namespace Minesweeper
             return tiles;
         }
 
-        public void SeedMine(int row, int column)
+        public MineTile SeedMine(int row, int column)
         {
-            Tiles[row, column] = new MineTile(this, row, column);
+            MineTile mine = new MineTile(this, row, column);
+            Tiles[row, column] = mine;
+            Clearables--;
+
+            return mine;
         }
     }
 }

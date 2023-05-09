@@ -8,11 +8,6 @@ namespace Minesweeper.GameTiles
         protected override void Activate()
         {
             Text = "M";
-
-            if (!_board.GameOver)
-            {
-                _board.LoseGame();
-            }
         }
     }
 }

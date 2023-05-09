@@ -11,6 +11,8 @@ namespace Minesweeper.GameTiles
         {
             Counter = CountNeighbourMines();
             Text = Counter.ToString();
+            _board.ClearTile();
+            
         }
 
         private List<GameTile> GetNeighbours()
