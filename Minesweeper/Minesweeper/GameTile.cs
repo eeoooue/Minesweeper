@@ -25,7 +25,6 @@ namespace Minesweeper
 
         public void UserClick()
         {
-
             if (Flagged)
             {
                 return;
@@ -59,7 +58,10 @@ namespace Minesweeper
                 {
                     foreach(GameTile tile in GetNeighbours())
                     {
-                        tile.Click();
+                        if (!tile.Clicked)
+                        {
+                            tile.Click();
+                        }
                     }
                 }
             }

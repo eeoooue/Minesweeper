@@ -116,7 +116,6 @@ namespace Minesweeper
             {
                 tile.Click();
             }
-
             GameOver = true;
         }
     }
