@@ -11,7 +11,7 @@ namespace Minesweeper.GameTiles
 
             if (!_board.GameOver)
             {
-                _board.EndGame();
+                _board.LoseGame();
             }
         }
     }

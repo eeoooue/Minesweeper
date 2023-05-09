@@ -12,6 +12,7 @@ namespace Minesweeper
         private int _mineCount;
 
         public bool GameOver { get; private set; }
+        public bool Victory { get; private set; }
         private bool _seeded = false;
 
         private List<GameTile> _affected = new List<GameTile>();
@@ -20,6 +21,7 @@ namespace Minesweeper
         {
             Board = new GameBoard(this, rows, columns);
             GameOver = false;
+            Victory = false;
             _mineCount = mineCount;
         }
 
@@ -41,20 +43,51 @@ namespace Minesweeper
                 _affected.Add(tile);
             }
 
+
+            if (GameIsWon())
+            {
+                Victory = true;
+                GameOver = true;
+            }
+
             return Board.GetAllCells();
         }
 
-        public void EndGame()
-        {
-            GameOver = true;
 
-            foreach(GameTile tile in Board.Tiles)
+        private bool GameIsWon()
+        {
+            foreach(GameTile tile in Board.GetAllCells())
+            {
+                if (tile.Clicked)
+                {
+                    if (tile is MineTile)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (tile is EmptyTile)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public void LoseGame()
+        {
+            foreach (GameTile tile in Board.Tiles)
             {
                 if (tile is MineTile && !tile.Clicked)
                 {
                     tile.Click();
                 }
             }
+
+            GameOver = true;
         }
 
 

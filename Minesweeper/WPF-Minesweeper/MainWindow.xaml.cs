@@ -27,7 +27,7 @@ namespace WPF_Minesweeper
         public int m = 0;
         public int n = 0;
 
-        public Game myGame = new ExpertGame();
+        public Game myGame = new BeginnerGame();
 
         private HashSet<Key> _pressed = new HashSet<Key>();
 
@@ -42,7 +42,7 @@ namespace WPF_Minesweeper
 
         void StartNewGame()
         {
-            myGame = new ExpertGame();
+            myGame = new BeginnerGame();
             m = myGame.Board.Rows;
             n = myGame.Board.Columns;
             ButtonBoard board = new ButtonBoard(myGame.Board, myGame, Container);
