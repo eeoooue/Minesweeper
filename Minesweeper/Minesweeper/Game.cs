@@ -1,7 +1,4 @@
-﻿
-using Minesweeper.GameTiles;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using Minesweeper.GameTiles;
 
 namespace Minesweeper
 {
@@ -13,10 +10,6 @@ namespace Minesweeper
 
         public bool GameOver { get; private set; }
         public bool Victory { get; private set; }
-
-        private bool HasMines {  get { return _mines.Count > 0; } }
-
-        private List<MineTile> _mines = new();
 
         public Game(int rows, int columns, int mineCount)
         {
@@ -30,12 +23,13 @@ namespace Minesweeper
         {
             if (!GameOver)
             {
-                if (!HasMines)
-                {
-                    SeedMines(row, col);
-                }
-
                 GameTile tile = Board.GetTile(row, col);
+
+                if (!Board.HasMines)
+                {
+                    Board.SeedMines(tile, _mineCount);
+                }
+                
                 tile.UserClick();
             }
 
@@ -67,28 +61,9 @@ namespace Minesweeper
             return GetAffected();
         }
 
-        private void SeedMines(int i, int j)
-        {
-            GameTile origin = Board.GetTile(i, j);
-            Random randomizer = new Random();
-
-            while (_mines.Count < _mineCount)
-            {
-                int row = randomizer.Next(0, Board.Rows);
-                int column = randomizer.Next(0, Board.Columns);
-                GameTile tile = Board.GetTile(row, column);
-
-                if (tile is EmptyTile && tile != origin)
-                {
-                    MineTile mine = Board.SeedMine(row, column);
-                    _mines.Add(mine);
-                }
-            }
-        }
-
         private void CheckGameState()
         {
-            foreach (MineTile mine in _mines)
+            foreach (MineTile mine in Board._mines)
             {
                 if (mine.Clicked)
                 {
@@ -112,7 +87,7 @@ namespace Minesweeper
 
         private void LoseGame()
         {
-            foreach (MineTile tile in _mines)
+            foreach (MineTile tile in Board._mines)
             {
                 tile.Click();
             }
