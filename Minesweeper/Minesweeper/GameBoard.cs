@@ -10,33 +10,31 @@ namespace Minesweeper
 
         public GameTile[,] Tiles { get; private set; }
 
-        public bool GameOver { get; private set; }
+        public bool Cleared { get { return Clearables == 0; } }
 
-        private Game _game;
+        protected int Clearables { get; private set; }
 
-        public GameBoard(Game game, int rows, int columns)
+        private Stack<GameTile> _affectedTiles = new Stack<GameTile>();
+
+        private Random _randomizer = new Random();
+
+        public bool HasMines { get { return _mines.Count > 0; } }
+
+        public List<MineTile> _mines = new();
+
+        public Stack<GameTile> Affected { get { return _affectedTiles; } }
+
+        public GameBoard(int rows, int columns)
         {
-            _game = game;
             Rows = rows;
             Columns = columns;
-            Tiles = new GameTile[Rows, Columns];
-            BuildTiles();
-            GameOver = false;
+            Tiles = BuildTiles();
+            Clearables = Rows * Columns;
         }
 
-        public List<GameTile> GetAllCells()
+        public void ClearTile()
         {
-            List<GameTile> list = new List<GameTile>();
-            foreach(GameTile tile in Tiles)
-            {
-                list.Add(tile);
-            }
-            return list;
-        }
-
-        public void LoseGame()
-        {
-            _game.LoseGame();
+            Clearables--;
         }
 
         public GameTile GetTile(int i, int j)
@@ -44,20 +42,51 @@ namespace Minesweeper
             return Tiles[i, j];
         }
 
-        private void BuildTiles()
+        private GameTile[,] BuildTiles()
         {
-            for(int i = 0; i < Rows; i++)
+            GameTile[,] tiles = new GameTile[Rows, Columns];
+            for (int i = 0; i < Rows; i++)
             {
                 for(int j = 0; j < Columns; j++)
                 {
-                    Tiles[i, j] = new EmptyTile(this, i, j);
+                    tiles[i, j] = new EmptyTile(this, i, j);
+                }
+            }
+
+            return tiles;
+        }
+
+
+        public void SeedMines(GameTile origin, int mineCount)
+        {
+            while (_mines.Count < mineCount)
+            {
+                GameTile tile = GetRandomTile();
+
+                if (tile is EmptyTile && tile != origin)
+                {
+                    MineTile mine = SeedMine(tile);
+                    _mines.Add(mine);
                 }
             }
         }
 
-        public void SeedMine(int row, int column)
+        private GameTile GetRandomTile()
         {
-            Tiles[row, column] = new MineTile(this, row, column);
+            int row = _randomizer.Next(0, Rows);
+            int column = _randomizer.Next(0, Columns);
+            GameTile tile = GetTile(row, column);
+
+            return tile;
+        }
+
+        private MineTile SeedMine(GameTile tile)
+        {
+            MineTile mine = new MineTile(this, tile.Row, tile.Column);
+            Tiles[tile.Row, tile.Column] = mine;
+            Clearables--;
+
+            return mine;
         }
     }
 }

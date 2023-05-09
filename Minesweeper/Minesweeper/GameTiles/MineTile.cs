@@ -5,14 +5,21 @@ namespace Minesweeper.GameTiles
     {
         public MineTile(GameBoard parent, int i, int j) : base(parent, i, j) { }
 
+        public override void Click()
+        {
+            if (Flagged || Clicked)
+            {
+                return;
+            }
+
+            Clicked = true;
+            Activate();
+            _board.Affected.Push(this);
+        }
+
         protected override void Activate()
         {
             Text = "M";
-
-            if (!_board.GameOver)
-            {
-                _board.LoseGame();
-            }
         }
     }
 }

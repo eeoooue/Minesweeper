@@ -90,7 +90,7 @@ namespace WPF_Minesweeper
 
         private void ShowVictory()
         {
-            foreach (GameTile tile in _board.GetAllCells())
+            foreach (GameTile tile in _board.Tiles)
             {
                 TileButton button = _tileButtons[tile.Row, tile.Column];
                 button.ShowVictoryState(tile);
@@ -99,7 +99,7 @@ namespace WPF_Minesweeper
 
         private void ShowLoss()
         {
-            foreach (GameTile tile in _board.GetAllCells())
+            foreach (GameTile tile in _board.Tiles)
             {
                 TileButton button = _tileButtons[tile.Row, tile.Column];
                 button.ShowLossState(tile);
