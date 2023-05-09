@@ -23,22 +23,19 @@ namespace Minesweeper
         {
             if (!GameOver)
             {
-                GameTile tile = Board.GetTile(row, col);
-
+                GameTile tile = Board.Tiles[row, col];
                 if (!Board.HasMines)
                 {
                     Board.SeedMines(tile, _mineCount);
                 }
-                
                 tile.UserClick();
             }
+            GameOver = CheckGameOver();
 
-            CheckGameState();
-
-            return GetAffected();
+            return GetAffectedTiles();
         }
 
-        private List<GameTile> GetAffected()
+        private List<GameTile> GetAffectedTiles()
         {
             List<GameTile> affected = new List<GameTile>();
             while (Board.Affected.Count > 0)
@@ -54,35 +51,36 @@ namespace Minesweeper
         {
             if (!GameOver)
             {
-                GameTile tile = Board.GetTile(row, col);
+                GameTile tile = Board.Tiles[row, col];
                 tile.Flag();
             }
 
-            return GetAffected();
+            return GetAffectedTiles();
         }
 
-        private void CheckGameState()
+        private bool CheckGameOver()
         {
             foreach (MineTile mine in Board._mines)
             {
                 if (mine.Clicked)
                 {
                     LoseGame();
-                    return;
+                    return true;
                 }
             }
 
             if (Board.Cleared)
             {
                 WinGame();
-                return;
+                return true;
             }
+
+            return false;
         }
 
         private void WinGame()
         {
             Victory = true;
-            GameOver = true;
         }
 
         private void LoseGame()
@@ -91,7 +89,6 @@ namespace Minesweeper
             {
                 tile.Click();
             }
-            GameOver = true;
         }
     }
 }

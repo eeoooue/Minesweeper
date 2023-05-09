@@ -4,42 +4,33 @@ namespace Minesweeper
 {
     public class GameBoard
     {
-        public int Rows { get; private set; }
-
-        public int Columns { get; private set; }
-
         public GameTile[,] Tiles { get; private set; }
+        public int Rows { get; private set; }
+        public int Columns { get; private set; }
+        public bool Cleared { get { return _clearables == 0; } }
+        public bool HasMines { get { return _mines.Count > 0; } }
 
-        public bool Cleared { get { return Clearables == 0; } }
-
-        protected int Clearables { get; private set; }
+        public Stack<GameTile> Affected { get { return _affectedTiles; } }
 
         private Stack<GameTile> _affectedTiles = new Stack<GameTile>();
 
         private Random _randomizer = new Random();
 
-        public bool HasMines { get { return _mines.Count > 0; } }
-
         public List<MineTile> _mines = new();
 
-        public Stack<GameTile> Affected { get { return _affectedTiles; } }
+        private int _clearables;
 
         public GameBoard(int rows, int columns)
         {
             Rows = rows;
             Columns = columns;
             Tiles = BuildTiles();
-            Clearables = Rows * Columns;
+            _clearables = Rows * Columns;
         }
 
         public void ClearTile()
         {
-            Clearables--;
-        }
-
-        public GameTile GetTile(int i, int j)
-        {
-            return Tiles[i, j];
+            _clearables--;
         }
 
         private GameTile[,] BuildTiles()
@@ -75,7 +66,7 @@ namespace Minesweeper
         {
             int row = _randomizer.Next(0, Rows);
             int column = _randomizer.Next(0, Columns);
-            GameTile tile = GetTile(row, column);
+            GameTile tile = Tiles[row, column];
 
             return tile;
         }
@@ -84,7 +75,7 @@ namespace Minesweeper
         {
             MineTile mine = new MineTile(this, tile.Row, tile.Column);
             Tiles[tile.Row, tile.Column] = mine;
-            Clearables--;
+            _clearables--;
 
             return mine;
         }
