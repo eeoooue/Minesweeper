@@ -13,13 +13,7 @@ namespace Minesweeper.GameTiles
             }
 
             Clicked = true;
-            Activate();
-            _board.Affected.Push(this);
-        }
-
-        protected override void Activate()
-        {
-            Text = "M";
+            NotifyParent();
         }
     }
 }

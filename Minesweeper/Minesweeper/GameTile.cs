@@ -3,48 +3,42 @@ namespace Minesweeper
 {
     public abstract class GameTile
     {
-        public string Text { get; protected set; }
         public bool Clicked { get; protected set; }
         public bool Flagged { get; protected set; }
+        public int Row { get; private set; }
+        public int Column { get; private set; }
 
         protected readonly GameBoard _board;
 
-        public int Row { get; private set; }
-        public int Column { get; private set; }
-        
         public GameTile(GameBoard parent, int i, int j)
         {
             _board = parent;
-            Text = "";
             Row = i;
             Column = j;
         }
 
-        protected abstract void Activate();
-
         public abstract void Click();
 
+        protected void NotifyParent()
+        {
+            _board.Affected.Push(this);
+        }
 
         public void UserClick()
         {
-            if (Flagged)
+            if (!Flagged)
             {
-                return;
+                Click();
             }
-
-            Click();
         }
 
         public bool Flag()
         {
-            if (Clicked)
+            if (!Clicked)
             {
-                return false;
+                Flagged = !Flagged;
+                NotifyParent();
             }
-
-            Flagged = !Flagged;
-            _board.Affected.Push(this);
-
             return Flagged;
         }
     }

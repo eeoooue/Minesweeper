@@ -7,10 +7,9 @@ namespace Minesweeper.GameTiles
 
         public EmptyTile(GameBoard parent, int i, int j) : base(parent, i, j) { }
 
-        protected override void Activate()
+        private void Uncover()
         {
             Counter = CountNeighbourMines();
-            Text = Counter.ToString();
             _board.ClearTile();
 
             if (Counter == 0)
@@ -23,6 +22,8 @@ namespace Minesweeper.GameTiles
                     }
                 }
             }
+
+            NotifyParent();
         }
 
         public override void Click()
@@ -35,15 +36,13 @@ namespace Minesweeper.GameTiles
             if (Clicked)
             {
                 Chord();
-                return;
             }
-
-            Clicked = true;
-            Activate();
-
-            _board.Affected.Push(this);
+            else
+            {
+                Clicked = true;
+                Uncover();
+            }
         }
-
 
         private List<GameTile> GetNeighbours()
         {
@@ -57,7 +56,7 @@ namespace Minesweeper.GameTiles
                     {
                         if (0 <= j && j < _board.Columns)
                         {
-                            GameTile neighbour = _board.GetTile(i, j);
+                            GameTile neighbour = _board.Tiles[i, j];
                             if (neighbour != this)
                             {
                                 neighbours.Add(neighbour);
